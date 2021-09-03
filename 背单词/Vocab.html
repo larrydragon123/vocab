@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>背单词</title>
+</head>
+
+<body>
+    <!--  -->
+    <input type="file" name="inputfile" id="inputfile">
+    <input type="checkbox" id="cbox1" value="first_checkbox">
+    <label for="cbox1">Activate Mouse Click</label>
+    <br>
+    <p id="number" style="text-align:left"></p>
+    <p id="demo" style="text-align:center"></p>
+    <!-- <pre id="output"></pre> -->
+    <!-- <button id="next">next</button> -->
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- <p id="demo"></p> -->
+    <pre id="output"></pre>
+
+    <script type="text/javascript">
+        document.getElementById('inputfile')
+            .addEventListener('change', function () {
+
+                var fr = new FileReader();
+
+                var number = 0;
+                var lines;
+                var temp;
+                var counter = 0;
+                var n = 1;
+                var x = 1;
+                var button = document.getElementById('next')
+                fr.onload = function () {
+                    //speak
+                    let utter = new SpeechSynthesisUtterance();
+                    utter.lang = 'en-US';
+                    utter.volume = 0.8;
+                    utter.rate = 0.8;
+                    //get vocab
+                    document.getElementById('output')
+                        .textContent = fr.result;
+
+                    lines = fr.result.split(/\s+/);
+                    document.getElementById("demo").innerHTML = (lines[number]);
+                    utter.text = lines[number];
+                    document.getElementById("number").innerHTML = "no." + (parseInt(number / 2) + 1) + " ";
+                    document.addEventListener('click', (event) => {
+                        //forward iter
+                        if (document.getElementById('cbox1').checked) {
+                            // {
+                            //     cursor: none;
+                            // }
+                            console.log("clicked");
+                            if (number < lines.length && number < 10 * n - 1 && counter == 0) {
+                                console.log("forward");
+                                number++;
+                            } else if (counter == 0) {
+
+                                counter = 10;
+                                // x = 1;//reset counter
+                                n++;
+                            }
+
+                            //backward iter
+                            if (number < lines.length && number >= 10 * (n - 2) && counter > 0) {
+                                console.log("backward");
+                                //make words in order
+
+
+                                if (x == 1) {
+                                    x = -3;
+                                    console.log("-3");
+                                } else if (x == -3) {
+                                    console.log("1");
+                                    x = 1;
+                                }
+
+                                number += x;
+
+                                counter--;
+                                if (counter == 2) counter = 0;
+                            } else if (number >= lines.length) {
+                                console.log("beiwanle");
+                                //restart
+                                number = 0;
+                            }
+                            document.getElementById("demo").innerHTML = (lines[number]);
+                            document.getElementById("number").innerHTML = "no." + (parseInt(number / 2) + 1) + " ";
+                            utter.text = lines[number];
+                            utter.voice = voices[2];
+                            window.speechSynthesis.speak(utter);
+                        }
+                    });
+                    document.addEventListener('keydown', (event) => {
+                        //speak
+                        // "No."+parseInt(number/2)+" "
+
+                        //增加了一键背单词9/2/2021
+
+                        if (event.keyCode === 191) {
+                            console.log('按下了/');
+
+
+                            //forward iter
+                            if (number < lines.length && number < 10 * n - 1 && counter == 0) {
+                                console.log("forward");
+                                number++;
+                            } else if (counter == 0) {
+
+                                counter = 10;
+                                // x = 1;//reset counter
+                                n++;
+                            }
+
+                            //backward iter
+                            if (number < lines.length && number >= 10 * (n - 2) && counter > 0) {
+                                console.log("backward");
+                                //make words in order
+
+
+                                if (x == 1) {
+                                    x = -3;
+                                    console.log("-3");
+                                } else if (x == -3) {
+                                    console.log("1");
+                                    x = 1;
+                                }
+
+                                number += x;
+
+                                counter--;
+                                if (counter == 2) counter = 0;
+                            } else if (number >= lines.length) {
+                                console.log("beiwanle");
+                                //restart
+                                number = 0;
+                            }
+
+                            document.getElementById("demo").innerHTML = (lines[number]);
+                            console.log("number: ", number);
+                            console.log("counter: ", counter);
+                            console.log("n: ", n);
+                        }
+
+                        if (event.keyCode === 37 || event.keyCode === 49) {
+                            console.log('按下了左方向键');
+
+                            if (number >= 1 && (number % 2 == 0)) {
+                                number -= 2;
+                            } else if (number >= 1 && number % 2 != 0) {
+                                number--;
+                            }
+                            document.getElementById("demo").innerHTML = (lines[number]);
+
+                        } else if (event.keyCode === 39 || event.keyCode === 50) {
+                            console.log('按下了右方向键');
+
+                            if (number < lines.length) number++;
+                            document.getElementById("demo").innerHTML = (lines[number]);
+
+                        }
+
+                        document.getElementById("number").innerHTML = "no." + (parseInt(number / 2) + 1) + " ";
+                        utter.text = lines[number];
+                        window.speechSynthesis.speak(utter);
+                    });
+
+
+                }
+                fr.readAsText(this.files[0]);
+
+
+            })
+    </script>
+    <!-- <script>
+        
+    </script> -->
+</body>
+
+</html>
