@@ -10,6 +10,7 @@
     <input type="file" name="inputfile" id="inputfile">
     <input type="checkbox" id="cbox1" value="first_checkbox">
     <label for="cbox1">Activate Mouse Click</label>
+
     <br>
     <p id="number" style="text-align:left"></p>
     <p id="demo" style="text-align:center"></p>
@@ -21,6 +22,10 @@
     <br>
     <br>
     <!-- <p id="demo"></p> -->
+    <input type="checkbox" checked ='checked' id="cbox2" value="checkbox2">
+    <label for="cbox2">英文发音开关</label>
+    <input type="checkbox" checked ='checked' id="cbox3" value="checkbox3">
+    <label for="cbox3">中文发音开关</label>
     <pre id="output"></pre>
 
     <script type="text/javascript">
@@ -35,20 +40,25 @@
                 var counter = 0;
                 var n = 1;
                 var x = 1;
+
                 var button = document.getElementById('next')
                 fr.onload = function () {
                     //speak
+
                     let utter = new SpeechSynthesisUtterance();
                     utter.lang = 'en-US';
                     utter.volume = 0.8;
                     utter.rate = 0.8;
+
                     //get vocab
                     document.getElementById('output')
                         .textContent = fr.result;
 
                     lines = fr.result.split(/\s+/);
                     document.getElementById("demo").innerHTML = (lines[number]);
+                    window.speechSynthesis.speak(utter);//init
                     utter.text = lines[number];
+                    
                     document.getElementById("number").innerHTML = "no." + (parseInt(number / 2) + 1) + " ";
                     document.addEventListener('click', (event) => {
                         //forward iter
@@ -93,8 +103,19 @@
                             document.getElementById("demo").innerHTML = (lines[number]);
                             document.getElementById("number").innerHTML = "no." + (parseInt(number / 2) + 1) + " ";
                             utter.text = lines[number];
-                            utter.voice = voices[2];
-                            window.speechSynthesis.speak(utter);
+                            window.speechSynthesis.cancel();
+                            voices = window.speechSynthesis.getVoices();
+
+                            if (number % 2 == 0 && document.getElementById('cbox2').checked) {
+                                utter.voice = voices[7];
+                                window.speechSynthesis.speak(utter);
+                                console.log('english')
+                            } else if (number % 2 != 0 && document.getElementById('cbox3').checked) {
+                                utter.voice = voices[4]
+                                window.speechSynthesis.speak(utter);
+                                console.log('中文')
+                            }
+
                         }
                     });
                     document.addEventListener('keydown', (event) => {
@@ -103,7 +124,7 @@
 
                         //增加了一键背单词9/2/2021
 
-                        if (event.keyCode === 191) {
+                        if (event.keyCode === 191 || event.keyCode === 179 || event.keyCode === 111) {
                             console.log('按下了/');
 
 
@@ -168,7 +189,17 @@
 
                         document.getElementById("number").innerHTML = "no." + (parseInt(number / 2) + 1) + " ";
                         utter.text = lines[number];
-                        window.speechSynthesis.speak(utter);
+                        window.speechSynthesis.cancel();
+                        voices = window.speechSynthesis.getVoices();
+                        if (number % 2 == 0 && document.getElementById('cbox2').checked) {
+                            utter.voice = voices[7];
+                            window.speechSynthesis.speak(utter);
+                            console.log('english')
+                        } else if (number % 2 != 0 && document.getElementById('cbox3').checked) {
+                            utter.voice = voices[4]
+                            window.speechSynthesis.speak(utter);
+                            console.log('中文')
+                        }
                     });
 
 
